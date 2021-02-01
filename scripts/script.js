@@ -12,8 +12,6 @@ const pickerInput = document.querySelector('#color-picker');
 
 // TODO: allow user to select grid size from a slider instead of a prompt
 
-// TODO: toggle drawing capability with click on container
-
 // TODO: consider adding a "rainbow" option where colors are in ROYGBIV order
 
 // TODO: alternative random colors? one for cool colors, one for warm, one for truly random?
@@ -45,10 +43,12 @@ const createGrid = function createGridFromUserInput(divsPerSide = 16) {
 
 const changeColor = function changeDivColorOnHover(element) {
   const div = element;
-  if (currentColor === randomColor) {
-    div.style.background = randomColor();
+  if (!container.classList.contains('disabled')) {
+    if (typeof currentColor === 'function') {
+      div.style.background = currentColor();
+    }
+    div.style.background = currentColor;
   }
-  div.style.background = currentColor;
 };
 
 //* enables hover functionality; defaults to black
@@ -95,4 +95,9 @@ pickerButton.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
   createGrid();
   hover();
+});
+
+//* toggles drawing capability with click on container
+container.addEventListener('click', () => {
+  container.classList.toggle('disabled');
 });
