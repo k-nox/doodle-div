@@ -1,6 +1,19 @@
 const container = document.querySelector('.container');
 const clearButton = document.querySelector('#clear');
+const eraseButton = document.querySelector('#erase');
+const blackButton = document.querySelector('#black');
+const randomButton = document.querySelector('#random');
+let currentColor = 'black';
 let gridItem;
+
+//* random hex color:
+const randomColor = function generateRandomHexColor() {
+  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+};
+
+eraseButton.addEventListener('click', () => (currentColor = 'white'));
+blackButton.addEventListener('click', () => (currentColor = 'black'));
+randomButton.addEventListener('click', () => (currentColor = randomColor));
 
 //* creates grid from user input; defaults to 16x16
 const createGrid = function createGridFromUserInput(divsPerSide = 16) {
@@ -20,15 +33,19 @@ const createGrid = function createGridFromUserInput(divsPerSide = 16) {
 };
 createGrid();
 
-const changeColor = function changeDivColorOnHover(element, colorClass) {
-  element.classList.add(colorClass);
+const changeColor = function changeDivColorOnHover(element) {
+  const div = element;
+  if (currentColor === randomColor) {
+    div.style.background = randomColor();
+  }
+  div.style.background = currentColor;
 };
 
 //* enables hover functionality; defaults to black
-const hover = function changeColorOnHover(colorClass = 'black') {
+const hover = function changeColorOnHover() {
   gridItem.forEach(item => {
     item.addEventListener('mouseenter', function event() {
-      changeColor(this, colorClass);
+      changeColor(this);
     });
   });
 };
