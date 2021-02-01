@@ -6,6 +6,18 @@ const randomButton = document.querySelector('#random');
 const pickerButton = document.querySelector('#pick');
 const pickerInput = document.querySelector('#color-picker');
 
+// TODO: create buttons to incrementally darken or lighten a square by 10%
+
+// TODO: allow user to toggle gridlines on and off
+
+// TODO: allow user to select grid size from a slider instead of a prompt
+
+// TODO: toggle drawing capability with click on container
+
+// TODO: consider adding a "rainbow" option where colors are in ROYGBIV order
+
+// TODO: alternative random colors? one for cool colors, one for warm, one for truly random?
+
 let currentColor = 'black';
 let gridItem;
 
@@ -30,7 +42,6 @@ const createGrid = function createGridFromUserInput(divsPerSide = 16) {
     gridItem = document.querySelectorAll('.grid-item');
   }
 };
-createGrid();
 
 const changeColor = function changeDivColorOnHover(element) {
   const div = element;
@@ -48,7 +59,6 @@ const hover = function changeColorOnHover() {
     });
   });
 };
-hover();
 
 const askUser = function askUserForDivs() {
   // eslint-disable-next-line no-alert
@@ -80,4 +90,9 @@ pickerInput.addEventListener('change', e => (currentColor = e.target.value));
 pickerButton.addEventListener('click', () => {
   pickerInput.focus();
   pickerInput.click();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  createGrid();
+  hover();
 });
