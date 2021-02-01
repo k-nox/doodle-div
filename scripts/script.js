@@ -5,10 +5,9 @@ const blackButton = document.querySelector('#black');
 const randomButton = document.querySelector('#random');
 const pickerButton = document.querySelector('#pick');
 const pickerInput = document.querySelector('#color-picker');
+const toggleGridButton = document.querySelector('#toggle-grid');
 
 // TODO: create buttons to incrementally darken or lighten a square by 10%
-
-// TODO: allow user to toggle gridlines on and off
 
 // TODO: allow user to select grid size from a slider instead of a prompt
 
@@ -73,16 +72,30 @@ const clearBoard = function resetAllDivsToBlank() {
   gridItem.forEach(item => item.remove());
 };
 
+//* check if gridItems contain the grid-lines class
+const checkGrid = function checkIfGridLinesAreEnabled() {
+  const gridItemArray = Array.from(gridItem);
+  return gridItemArray.every(item => item.classList.contains('grid-lines'));
+};
+
 //* clears board and resets grid to user-defined size on button click
 clearButton.addEventListener('click', () => {
+  const currentGridLineStatus = checkGrid();
   clearBoard();
   createGrid(askUser());
+  if (currentGridLineStatus) {
+    gridItem.forEach(item => item.classList.add('grid-lines'));
+  }
   hover();
 });
 
 eraseButton.addEventListener('click', () => (currentColor = 'white'));
 blackButton.addEventListener('click', () => (currentColor = 'black'));
 randomButton.addEventListener('click', () => (currentColor = randomColor));
+toggleGridButton.addEventListener('click', () => {
+  container.classList.toggle('container-thicker-border');
+  gridItem.forEach(item => item.classList.toggle('grid-lines'));
+});
 
 pickerInput.addEventListener('input', e => (currentColor = e.target.value));
 pickerInput.addEventListener('change', e => (currentColor = e.target.value));
@@ -92,12 +105,13 @@ pickerButton.addEventListener('click', () => {
   pickerInput.click();
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-  createGrid();
-  hover();
-});
-
 //* toggles drawing capability with click on container
 container.addEventListener('click', () => {
   container.classList.toggle('disabled');
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  createGrid();
+  gridItem.forEach(item => item.classList.add('grid-lines'));
+  hover();
 });

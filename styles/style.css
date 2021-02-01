@@ -16,8 +16,12 @@ body {
   place-content: stretch;
   grid-template-rows: repeat(var(--divs-per-side), 1fr);
   grid-template-columns: repeat(var(--divs-per-side), 1fr);
+  border: 2px solid black;
 }
-.grid-item {
+.grid-lines {
+  border: 1px solid black;
+}
+.container-thicker-border {
   border: 2px solid black;
 }
 #color-picker {
