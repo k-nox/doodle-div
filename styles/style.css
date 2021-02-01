@@ -1,0 +1,25 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  display: grid;
+  place-items: center;
+}
+.container {
+  --divs-per-side: 16;
+  display: grid;
+  width: 50vmax;
+  height: 50vmax;
+  place-items: stretch;
+  place-content: stretch;
+  grid-template-rows: repeat(var(--divs-per-side), 1fr);
+  grid-template-columns: repeat(var(--divs-per-side), 1fr);
+}
+.grid-item {
+  border: 2px solid black;
+}
+.black {
+  background-color: black;
+}
