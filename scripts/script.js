@@ -6,21 +6,43 @@ const randomButton = document.querySelector('#random');
 const pickerButton = document.querySelector('#pick');
 const pickerInput = document.querySelector('#color-picker');
 const toggleGridButton = document.querySelector('#toggle-grid');
+const rainbowButton = document.querySelector('#rainbow');
 
 // TODO: create buttons to incrementally darken or lighten a square by 10%
 
 // TODO: allow user to select grid size from a slider instead of a prompt
 
-// TODO: consider adding a "rainbow" option where colors are in ROYGBIV order
-
 // TODO: alternative random colors? one for cool colors, one for warm, one for truly random?
 
 let currentColor = 'black';
 let gridItem;
+let currentRainbowColor = 'violet';
 
 //* random hex color:
 const randomColor = function generateRandomHexColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+};
+
+//* sets color in order of rainbow
+const rainbowColor = function generateColorsInRainbowOrder() {
+  const rainbowArray = [
+    'red',
+    'orange',
+    'yellow',
+    'green',
+    'blue',
+    'indigo',
+    'violet',
+  ];
+  const lastIndex = rainbowArray.length - 1;
+  if (currentRainbowColor === rainbowArray[lastIndex]) {
+    // eslint-disable-next-line prefer-destructuring
+    currentRainbowColor = rainbowArray[0];
+  } else {
+    const nextIndex = rainbowArray.indexOf(currentRainbowColor) + 1;
+    currentRainbowColor = rainbowArray[nextIndex];
+  }
+  return currentRainbowColor;
 };
 
 //* creates grid from user input; defaults to 16x16
@@ -89,9 +111,10 @@ clearButton.addEventListener('click', () => {
   hover();
 });
 
-eraseButton.addEventListener('click', () => (currentColor = 'white'));
+eraseButton.addEventListener('click', () => (currentColor = 'transparent'));
 blackButton.addEventListener('click', () => (currentColor = 'black'));
 randomButton.addEventListener('click', () => (currentColor = randomColor));
+rainbowButton.addEventListener('click', () => (currentColor = rainbowColor));
 toggleGridButton.addEventListener('click', () => {
   container.classList.toggle('container-thicker-border');
   gridItem.forEach(item => item.classList.toggle('grid-lines'));
