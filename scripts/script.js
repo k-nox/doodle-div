@@ -3,6 +3,9 @@ const clearButton = document.querySelector('#clear');
 const eraseButton = document.querySelector('#erase');
 const blackButton = document.querySelector('#black');
 const randomButton = document.querySelector('#random');
+const pickerButton = document.querySelector('#pick');
+const pickerInput = document.querySelector('#color-picker');
+
 let currentColor = 'black';
 let gridItem;
 
@@ -10,10 +13,6 @@ let gridItem;
 const randomColor = function generateRandomHexColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 };
-
-eraseButton.addEventListener('click', () => (currentColor = 'white'));
-blackButton.addEventListener('click', () => (currentColor = 'black'));
-randomButton.addEventListener('click', () => (currentColor = randomColor));
 
 //* creates grid from user input; defaults to 16x16
 const createGrid = function createGridFromUserInput(divsPerSide = 16) {
@@ -44,7 +43,7 @@ const changeColor = function changeDivColorOnHover(element) {
 //* enables hover functionality; defaults to black
 const hover = function changeColorOnHover() {
   gridItem.forEach(item => {
-    item.addEventListener('mouseenter', function event() {
+    item.addEventListener('mouseenter', function update() {
       changeColor(this);
     });
   });
@@ -69,4 +68,16 @@ clearButton.addEventListener('click', () => {
   clearBoard();
   createGrid(askUser());
   hover();
+});
+
+eraseButton.addEventListener('click', () => (currentColor = 'white'));
+blackButton.addEventListener('click', () => (currentColor = 'black'));
+randomButton.addEventListener('click', () => (currentColor = randomColor));
+
+pickerInput.addEventListener('input', e => (currentColor = e.target.value));
+pickerInput.addEventListener('change', e => (currentColor = e.target.value));
+
+pickerButton.addEventListener('click', () => {
+  pickerInput.focus();
+  pickerInput.click();
 });
