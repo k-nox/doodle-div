@@ -21,6 +21,11 @@ body {
 .grid-lines {
   border: 1px solid black;
 }
+.grid-item {
+  --brightness-level: 1;
+  filter: brightness(var(--brightness-level));
+  background-color: white;
+}
 .container-thicker-border {
   border: 2px solid black;
 }

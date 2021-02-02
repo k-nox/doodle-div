@@ -7,24 +7,31 @@ const pickerButton = document.querySelector('#pick');
 const pickerInput = document.querySelector('#color-picker');
 const toggleGridButton = document.querySelector('#toggle-grid');
 const rainbowButton = document.querySelector('#rainbow');
+const darkenButton = document.querySelector('#darken');
+const lightenButton = document.querySelector('#lighten');
 
-// TODO: create buttons to incrementally darken or lighten a square by 10%
+// TODO: refactor code so that there is one query selector for all buttons
+//! use forEach to add event listeners and use ID to execute correctly
 
 // TODO: allow user to select grid size from a slider instead of a prompt
 
 // TODO: alternative random colors? one for cool colors, one for warm, one for truly random?
 
-let currentColor = 'black';
+let currentMode = 'black';
 let gridItem;
 let currentRainbowColor = 'violet';
 
 //* random hex color:
-const randomColor = function generateRandomHexColor() {
-  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+const randomColor = function generateRandomHexColor(element) {
+  const div = element;
+  div.style.background = `#${Math.floor(Math.random() * 16777215).toString(
+    16
+  )}`;
 };
 
 //* sets color in order of rainbow
-const rainbowColor = function generateColorsInRainbowOrder() {
+const rainbowColor = function generateColorsInRainbowOrder(element) {
+  const div = element;
   const rainbowArray = [
     'red',
     'orange',
@@ -42,7 +49,48 @@ const rainbowColor = function generateColorsInRainbowOrder() {
     const nextIndex = rainbowArray.indexOf(currentRainbowColor) + 1;
     currentRainbowColor = rainbowArray[nextIndex];
   }
-  return currentRainbowColor;
+  div.style.background = currentRainbowColor;
+};
+
+//* erases all color and resets brightness level
+const erase = function eraseColorAndBrightness(element) {
+  const div = element;
+  div.style.background = 'white';
+  div.style.setProperty('--brightness-level', 1);
+};
+
+//* darkens grid item by 10% on each pass
+const darkenGridItem = function darkenGridItemGradually(element) {
+  const div = element;
+  const currentBrightness = +getComputedStyle(div).getPropertyValue(
+    '--brightness-level'
+  );
+  const nextBrightness = currentBrightness - 0.1;
+  if (currentBrightness > 0) {
+    div.style.setProperty('--brightness-level', nextBrightness);
+  }
+};
+
+//* lightens grid item by 10% on each pass
+const lightenGridItem = function lightenGridItemGradually(element) {
+  const div = element;
+  const currentBackgroundColor = getComputedStyle(div).getPropertyValue(
+    'background-color'
+  );
+
+  // if current color is black, set to white with 0% brightness
+  // black cannot be lightened with brightness
+  if (currentBackgroundColor === 'rgb(0, 0, 0)') {
+    div.style.setProperty('--brightness-level', 0);
+    div.style.background = 'white';
+  }
+
+  const currentBrightness = +getComputedStyle(div).getPropertyValue(
+    '--brightness-level'
+  );
+  const nextBrightness = currentBrightness + 0.1;
+
+  div.style.setProperty('--brightness-level', nextBrightness);
 };
 
 //* creates grid from user input; defaults to 16x16
@@ -65,10 +113,11 @@ const createGrid = function createGridFromUserInput(divsPerSide = 16) {
 const changeColor = function changeDivColorOnHover(element) {
   const div = element;
   if (!container.classList.contains('disabled')) {
-    if (typeof currentColor === 'function') {
-      div.style.background = currentColor();
+    if (typeof currentMode === 'function') {
+      currentMode(div);
+    } else {
+      div.style.background = currentMode;
     }
-    div.style.background = currentColor;
   }
 };
 
@@ -111,17 +160,24 @@ clearButton.addEventListener('click', () => {
   hover();
 });
 
-eraseButton.addEventListener('click', () => (currentColor = 'transparent'));
-blackButton.addEventListener('click', () => (currentColor = 'black'));
-randomButton.addEventListener('click', () => (currentColor = randomColor));
-rainbowButton.addEventListener('click', () => (currentColor = rainbowColor));
+const setMode = function setCurrentMode(color) {
+  currentMode = color;
+};
+
+eraseButton.addEventListener('click', () => setMode(erase));
+blackButton.addEventListener('click', () => setMode('black'));
+randomButton.addEventListener('click', () => setMode(randomColor));
+rainbowButton.addEventListener('click', () => setMode(rainbowColor));
+darkenButton.addEventListener('click', () => setMode(darkenGridItem));
+lightenButton.addEventListener('click', () => setMode(lightenGridItem));
+
 toggleGridButton.addEventListener('click', () => {
   container.classList.toggle('container-thicker-border');
   gridItem.forEach(item => item.classList.toggle('grid-lines'));
 });
 
-pickerInput.addEventListener('input', e => (currentColor = e.target.value));
-pickerInput.addEventListener('change', e => (currentColor = e.target.value));
+pickerInput.addEventListener('input', e => setMode(e.target.value));
+pickerInput.addEventListener('change', e => setMode(e.target.value));
 
 pickerButton.addEventListener('click', () => {
   pickerInput.focus();
