@@ -11,53 +11,53 @@ const setMode = function setCurrentMode(color) {
 };
 
 //* creates grid from user input; defaults to 16x16
-const createGrid = function createGridFromUserInput(divsPerSide = 16) {
-  let totalDivs;
-  if (divsPerSide >= 100) {
-    totalDivs = 10000;
+const createGrid = function createGridFromUserInput(itemsPerSide = 16) {
+  let totalItems;
+  if (itemsPerSide >= 100) {
+    totalItems = 10000;
   } else {
-    totalDivs = divsPerSide * divsPerSide;
+    totalItems = itemsPerSide * itemsPerSide;
   }
-  for (let i = 0; i < totalDivs; i += 1) {
-    const div = document.createElement('div');
-    div.classList.add('grid-item');
-    container.style.setProperty('--divs-per-side', divsPerSide);
-    container.append(div);
+  for (let i = 0; i < totalItems; i += 1) {
+    const item = document.createElement('div');
+    item.classList.add('grid-item');
+    container.style.setProperty('--items-per-side', itemsPerSide);
+    container.append(item);
     gridItems = document.querySelectorAll('.grid-item');
   }
 };
 
 //* enables hover functionality; defaults to black
-function changeColorOnHover() {
+const hover = function changeColorOnHover() {
   gridItems.forEach(item => {
     item.addEventListener('mouseenter', function updateMode() {
       changeColor(this);
     });
   });
-}
+};
 
-function changeColor(item) {
-  const div = item;
+const changeColor = function changeColorBasedOnCurrentMode(item) {
+  const currentItem = item;
   if (!container.classList.contains('disabled')) {
     if (typeof currentMode === 'function') {
-      currentMode(div);
+      currentMode(currentItem);
     } else {
-      div.style.background = currentMode;
+      currentItem.style.background = currentMode;
     }
   }
-}
+};
 
 //* generates random hex color
-function randomColor(item) {
-  const div = item;
-  div.style.background = `#${Math.floor(Math.random() * 16777215).toString(
-    16
-  )}`;
-}
+const randomColor = function generateRandomColor(item) {
+  const currentItem = item;
+  currentItem.style.background = `#${Math.floor(
+    Math.random() * 16777215
+  ).toString(16)}`;
+};
 
 //* sets color in order of rainbow
 const rainbowColor = function generateColorsInRainbowOrder(item) {
-  const div = item;
+  const currentItem = item;
   const rainbowArray = [
     'red',
     'orange',
@@ -75,77 +75,93 @@ const rainbowColor = function generateColorsInRainbowOrder(item) {
     const nextIndex = rainbowArray.indexOf(currentRainbowColor) + 1;
     currentRainbowColor = rainbowArray[nextIndex];
   }
-  div.style.background = currentRainbowColor;
+  currentItem.style.background = currentRainbowColor;
 };
 
 //* darkens grid item by 10% on each pass
 const darkenGridItem = function darkenGridItemGradually(item) {
-  const div = item;
-  const currentBrightness = +getComputedStyle(div).getPropertyValue(
+  const currentItem = item;
+  const currentBrightness = +getComputedStyle(currentItem).getPropertyValue(
     '--brightness-level'
   );
   const nextBrightness = currentBrightness - 0.1;
   if (currentBrightness > 0) {
-    div.style.setProperty('--brightness-level', nextBrightness);
+    currentItem.style.setProperty('--brightness-level', nextBrightness);
   }
 };
 
 //* lightens grid item by 10% on each pass
 const lightenGridItem = function lightenGridItemGradually(item) {
-  const div = item;
-  const currentBackgroundColor = getComputedStyle(div).getPropertyValue(
+  const currentItem = item;
+  const currentBackgroundColor = getComputedStyle(currentItem).getPropertyValue(
     'background-color'
   );
   // if current color is black, set to white with 0% brightness
   // black cannot be lightened with brightness
   if (currentBackgroundColor === 'rgb(0, 0, 0)') {
-    div.style.setProperty('--brightness-level', 0);
-    div.style.background = 'white';
+    currentItem.style.setProperty('--brightness-level', 0);
+    currentItem.style.background = 'white';
   }
 
-  const currentBrightness = +getComputedStyle(div).getPropertyValue(
+  const currentBrightness = +getComputedStyle(currentItem).getPropertyValue(
     '--brightness-level'
   );
   const nextBrightness = currentBrightness + 0.1;
 
-  div.style.setProperty('--brightness-level', nextBrightness);
+  currentItem.style.setProperty('--brightness-level', nextBrightness);
 };
 
 //* erases all color and resets brightness level on hover
 const erase = function eraseColorAndBrightness(item) {
-  const div = item;
-  div.style.background = 'white';
-  div.style.setProperty('--brightness-level', 1);
+  const currentItem = item;
+  currentItem.style.background = 'white';
+  currentItem.style.setProperty('--brightness-level', 1);
 };
 
 //* clears board and resets grid to user-defined size on button click
 const clear = function clearEverything() {
   const currentGridLineStatus = checkGrid();
-  clearBoard();
-  createGrid(askUser());
-  if (currentGridLineStatus) {
-    gridItems.forEach(item => item.classList.add('grid-lines'));
+  const currentItemsPerSide = Math.sqrt(gridItems.length);
+  const newItemsPerSide = askUser(currentItemsPerSide);
+  if (newItemsPerSide) {
+    clearContainer();
+    createGrid(newItemsPerSide);
+    if (currentGridLineStatus) {
+      gridItems.forEach(item => item.classList.add('grid-lines'));
+    }
+    hover();
   }
-  changeColorOnHover();
 };
 
-function checkGrid() {
+const checkGrid = function checkCurrentGridLineStatus() {
   const gridItemArray = Array.from(gridItems);
   return gridItemArray.every(item => item.classList.contains('grid-lines'));
-}
+};
 
-function clearBoard() {
+const clearContainer = function clearAllItemsFromContainer() {
   gridItems.forEach(item => item.remove());
-}
+};
 
-function askUser() {
+const askUser = function askUserForNewGridSize(currentItemsPerSide) {
   // eslint-disable-next-line no-alert
-  const divs = prompt('How many squares should each side of the grid take up?');
-  if (!divs) {
-    return 16;
+  let itemsPerSide = prompt(
+    'How many squares should each side of the grid be?'
+  );
+  const numRegex = /^-?\d+$/;
+  const whiteSpace = /\s/g;
+  if (itemsPerSide === null) {
+    return null;
   }
-  return divs;
-}
+  itemsPerSide = itemsPerSide.replace(whiteSpace, '');
+  if (numRegex.test(itemsPerSide)) {
+    itemsPerSide = Math.round(+itemsPerSide);
+    if (itemsPerSide < 1) {
+      return 1;
+    }
+    return itemsPerSide;
+  }
+  return currentItemsPerSide;
+};
 
 //* toggles drawing capability with click on container
 container.addEventListener('click', () => {
@@ -191,17 +207,8 @@ buttons.forEach(button =>
   })
 );
 
-/* //* enables hover functionality; defaults to black
-function changeColorOnHover() {
-  gridItems.forEach(item => {
-    item.addEventListener('mouseenter', function updateMode() {
-      changeColor(this);
-    });
-  });
-} */
-
 document.addEventListener('DOMContentLoaded', () => {
   createGrid();
   gridItems.forEach(item => item.classList.add('grid-lines'));
-  changeColorOnHover();
+  hover();
 });

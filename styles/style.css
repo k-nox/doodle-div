@@ -22,12 +22,12 @@ header {
   text-align: center;
 }
 .container {
-  --divs-per-side: 16;
+  --items-per-side: 16;
   display: grid;
   width: 40vw;
   height: 40vw;
-  grid-template-rows: repeat(var(--divs-per-side), 1fr);
-  grid-template-columns: repeat(var(--divs-per-side), 1fr);
+  grid-template-rows: repeat(var(--items-per-side), 1fr);
+  grid-template-columns: repeat(var(--items-per-side), 1fr);
   border: 2px solid black;
   margin: 1em auto;
   /* background-color: red; */
