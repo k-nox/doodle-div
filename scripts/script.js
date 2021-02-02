@@ -1,24 +1,11 @@
 const container = document.querySelector('.container');
-const clearButton = document.querySelector('#clear');
-const eraseButton = document.querySelector('#erase');
-const blackButton = document.querySelector('#black');
-const randomButton = document.querySelector('#random');
-const pickerButton = document.querySelector('#pick');
+const buttons = document.querySelectorAll('button');
 const pickerInput = document.querySelector('#color-picker');
-const toggleGridButton = document.querySelector('#toggle-grid');
-const rainbowButton = document.querySelector('#rainbow');
-const darkenButton = document.querySelector('#darken');
-const lightenButton = document.querySelector('#lighten');
-
-// TODO: refactor code so that there is one query selector for all buttons
-//! use forEach to add event listeners and use ID to execute correctly
 
 // TODO: allow user to select grid size from a slider instead of a prompt
 
-// TODO: alternative random colors? one for cool colors, one for warm, one for truly random?
-
 let currentMode = 'black';
-let gridItem;
+let gridItems;
 let currentRainbowColor = 'violet';
 
 //* random hex color:
@@ -106,7 +93,7 @@ const createGrid = function createGridFromUserInput(divsPerSide = 16) {
     div.classList.add('grid-item');
     container.style.setProperty('--divs-per-side', divsPerSide);
     container.append(div);
-    gridItem = document.querySelectorAll('.grid-item');
+    gridItems = document.querySelectorAll('.grid-item');
   }
 };
 
@@ -123,7 +110,7 @@ const changeColor = function changeDivColorOnHover(element) {
 
 //* enables hover functionality; defaults to black
 const hover = function changeColorOnHover() {
-  gridItem.forEach(item => {
+  gridItems.forEach(item => {
     item.addEventListener('mouseenter', function update() {
       changeColor(this);
     });
@@ -140,57 +127,76 @@ const askUser = function askUserForDivs() {
 };
 
 const clearBoard = function resetAllDivsToBlank() {
-  gridItem.forEach(item => item.remove());
+  gridItems.forEach(item => item.remove());
 };
 
 //* check if gridItems contain the grid-lines class
 const checkGrid = function checkIfGridLinesAreEnabled() {
-  const gridItemArray = Array.from(gridItem);
+  const gridItemArray = Array.from(gridItems);
   return gridItemArray.every(item => item.classList.contains('grid-lines'));
 };
 
 //* clears board and resets grid to user-defined size on button click
-clearButton.addEventListener('click', () => {
+const clear = function clearEverything() {
   const currentGridLineStatus = checkGrid();
   clearBoard();
   createGrid(askUser());
   if (currentGridLineStatus) {
-    gridItem.forEach(item => item.classList.add('grid-lines'));
+    gridItems.forEach(item => item.classList.add('grid-lines'));
   }
   hover();
-});
+};
 
 const setMode = function setCurrentMode(color) {
   currentMode = color;
 };
 
-eraseButton.addEventListener('click', () => setMode(erase));
-blackButton.addEventListener('click', () => setMode('black'));
-randomButton.addEventListener('click', () => setMode(randomColor));
-rainbowButton.addEventListener('click', () => setMode(rainbowColor));
-darkenButton.addEventListener('click', () => setMode(darkenGridItem));
-lightenButton.addEventListener('click', () => setMode(lightenGridItem));
-
-toggleGridButton.addEventListener('click', () => {
-  container.classList.toggle('container-thicker-border');
-  gridItem.forEach(item => item.classList.toggle('grid-lines'));
-});
-
-pickerInput.addEventListener('input', e => setMode(e.target.value));
 pickerInput.addEventListener('change', e => setMode(e.target.value));
-
-pickerButton.addEventListener('click', () => {
-  pickerInput.focus();
-  pickerInput.click();
-});
 
 //* toggles drawing capability with click on container
 container.addEventListener('click', () => {
   container.classList.toggle('disabled');
 });
 
+buttons.forEach(button =>
+  button.addEventListener('click', e => {
+    switch (e.target.id) {
+      case 'black':
+        setMode('black');
+        break;
+      case 'erase':
+        setMode(erase);
+        break;
+      case 'random':
+        setMode(randomColor);
+        break;
+      case 'rainbow':
+        setMode(rainbowColor);
+        break;
+      case 'darken':
+        setMode(darkenGridItem);
+        break;
+      case 'lighten':
+        setMode(lightenGridItem);
+        break;
+      case 'pick':
+        pickerInput.focus();
+        pickerInput.click();
+        break;
+      case 'clear':
+        clear();
+        break;
+      case 'toggle-grid':
+        container.classList.toggle('container-thicker-border');
+        gridItems.forEach(item => item.classList.toggle('grid-lines'));
+        break;
+      // no default
+    }
+  })
+);
+
 document.addEventListener('DOMContentLoaded', () => {
   createGrid();
-  gridItem.forEach(item => item.classList.add('grid-lines'));
+  gridItems.forEach(item => item.classList.add('grid-lines'));
   hover();
 });
