@@ -7,30 +7,40 @@ let gridItems;
 let currentRainbowColor = 'violet';
 let currentDrawMode = 'mouseenter';
 
-// TODO: add in turn on / off button as alternate way to control drawing
-
 const setColorMode = function setCurrentColorMode(color) {
   currentColorMode = color;
 };
 
-const setDrawMode = function setCurrentDrawMode(mode) {
+const setDrawMode = function setCurrentDrawMode(newDrawMode) {
   gridItems.forEach(item => {
     item.removeEventListener(currentDrawMode, updateColor);
   });
-  currentDrawMode = mode;
   let buttonText;
-  if (currentDrawMode === 'click') {
-    if (!container.classList.contains('disabled')) {
-      container.classList.remove('disabled');
+  if (newDrawMode === 'click') {
+    if (container.classList.contains('disabled')) {
+      toggleOnOff();
     }
     buttonText = 'Hover-to-Draw';
+    document.querySelector('#toggle-on-off').setAttribute('disabled', '');
   } else {
     buttonText = 'Click-to-Draw';
+    document.querySelector('#toggle-on-off').removeAttribute('disabled');
   }
   document.querySelector(
     '#toggle-draw-mode'
   ).textContent = `Switch to ${buttonText} Mode`;
+  currentDrawMode = newDrawMode;
   draw();
+};
+
+const toggleOnOff = function toggleDisabledClassOnContainer() {
+  if (currentDrawMode === 'mouseenter') {
+    const buttonText = container.classList.contains('disabled') ? 'Off' : 'On';
+    document.querySelector(
+      '#toggle-on-off'
+    ).textContent = `Turn Drawing ${buttonText}`;
+    container.classList.toggle('disabled');
+  }
 };
 
 //* creates grid from user input; defaults to 16x16
@@ -184,11 +194,7 @@ const askUser = function askUserForNewGridSize(currentItemsPerSide) {
 };
 
 //* toggles drawing capability with click on container
-container.addEventListener('click', () => {
-  if (currentDrawMode !== 'click') {
-    container.classList.toggle('disabled');
-  }
-});
+container.addEventListener('click', () => toggleOnOff());
 
 pickerInput.addEventListener('change', e => setColorMode(e.target.value));
 
@@ -234,6 +240,9 @@ buttons.forEach(button =>
       case 'toggle-grid':
         container.classList.toggle('container-thicker-border');
         gridItems.forEach(item => item.classList.toggle('grid-lines'));
+        break;
+      case 'toggle-on-off':
+        toggleOnOff();
         break;
       // no default
     }
