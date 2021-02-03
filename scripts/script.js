@@ -2,10 +2,10 @@ const container = document.querySelector('.container');
 const buttons = document.querySelectorAll('button');
 const pickerInput = document.querySelector('#color-picker');
 
-let currentColorMode = 'black';
+let currentColorMode = 'black'; // defaults currentColorMode to black on start
 let gridItems;
-let currentRainbowColor = 'violet';
-let currentDrawMode = 'mouseenter';
+let currentRainbowColor = 'violet'; // defaults the nextRainbowColor to red in rainbow mode
+let currentDrawMode = 'mouseenter'; // defaults drawing mode to hover
 
 const setColorMode = function setCurrentColorMode(color) {
   currentColorMode = color;
@@ -33,17 +33,6 @@ const setDrawMode = function setCurrentDrawMode(newDrawMode) {
   draw();
 };
 
-const toggleOnOff = function toggleDisabledClassOnContainer() {
-  if (currentDrawMode === 'mouseenter') {
-    const buttonText = container.classList.contains('disabled') ? 'Off' : 'On';
-    document.querySelector(
-      '#toggle-on-off'
-    ).textContent = `Turn Drawing ${buttonText}`;
-    container.classList.toggle('disabled');
-  }
-};
-
-//* creates grid from user input; defaults to 16x16
 const createGrid = function createGridFromUserInput(itemsPerSide = 16) {
   let totalItems;
   if (itemsPerSide >= 100) {
@@ -60,7 +49,6 @@ const createGrid = function createGridFromUserInput(itemsPerSide = 16) {
   }
 };
 
-//* enables hover functionality; defaults to black
 const draw = function drawUsingCurrentDrawAndColorMode() {
   gridItems.forEach(item => {
     item.addEventListener(currentDrawMode, updateColor);
@@ -77,7 +65,6 @@ function updateColor(e) {
   }
 }
 
-//* generates random hex color
 const randomColor = function generateRandomColor(item) {
   const currentItem = item;
   currentItem.style.background = `#${Math.floor(
@@ -85,7 +72,6 @@ const randomColor = function generateRandomColor(item) {
   ).toString(16)}`;
 };
 
-//* sets color in order of rainbow
 const rainbowColor = function generateColorsInRainbowOrder(item) {
   const currentItem = item;
   const rainbowArray = [
@@ -141,20 +127,23 @@ const lightenGridItem = function lightenGridItemGradually(item) {
   currentItem.style.setProperty('--brightness-level', nextBrightness);
 };
 
-//* erases all color and resets brightness level on hover
 const erase = function eraseColorAndBrightness(item) {
   const currentItem = item;
   currentItem.style.background = 'white';
   currentItem.style.setProperty('--brightness-level', 1);
 };
 
-//* clears board and resets grid to user-defined size on button click
 const clear = function clearEverything() {
-  const currentGridLineStatus = checkGrid();
+  const currentGridLineStatus = Array.from(gridItems).every(item =>
+    item.classList.contains('grid-lines')
+  );
   const currentItemsPerSide = Math.sqrt(gridItems.length);
   const newItemsPerSide = askUser(currentItemsPerSide);
   if (newItemsPerSide) {
-    clearContainer();
+    if (!container.classList.contains('disabled')) {
+      toggleOnOff();
+    }
+    gridItems.forEach(item => item.remove());
     createGrid(newItemsPerSide);
     if (currentGridLineStatus) {
       gridItems.forEach(item => item.classList.add('grid-lines'));
@@ -163,13 +152,14 @@ const clear = function clearEverything() {
   }
 };
 
-const checkGrid = function checkCurrentGridLineStatus() {
-  const gridItemArray = Array.from(gridItems);
-  return gridItemArray.every(item => item.classList.contains('grid-lines'));
-};
-
-const clearContainer = function clearAllItemsFromContainer() {
-  gridItems.forEach(item => item.remove());
+const toggleOnOff = function toggleDisabledClassOnContainer() {
+  if (currentDrawMode === 'mouseenter') {
+    const buttonText = container.classList.contains('disabled') ? 'Off' : 'On';
+    document.querySelector(
+      '#toggle-on-off'
+    ).textContent = `Turn Drawing ${buttonText}`;
+    container.classList.toggle('disabled');
+  }
 };
 
 const askUser = function askUserForNewGridSize(currentItemsPerSide) {
@@ -193,7 +183,6 @@ const askUser = function askUserForNewGridSize(currentItemsPerSide) {
   return currentItemsPerSide;
 };
 
-//* toggles drawing capability with click on container
 container.addEventListener('click', () => toggleOnOff());
 
 pickerInput.addEventListener('change', e => setColorMode(e.target.value));

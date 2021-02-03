@@ -14,8 +14,9 @@ button {
   font-family: inherit;
 }
 main {
-  width: 100vw;
-  background-color: cadetblue;
+  width: 100%;
+  display: grid;
+  grid-template: 'left-controls grid-container right-controls' auto / 1fr 45vw 1fr;
 }
 header {
   text-align: center;
@@ -29,7 +30,7 @@ header {
   grid-template-columns: repeat(var(--items-per-side), 1fr);
   border: 2px solid black;
   margin: 1em auto;
-  background-color: red;
+  grid-area: grid-container;
 }
 .grid-lines {
   border: 1px solid black;
@@ -49,5 +50,10 @@ header {
   display: flex;
   flex-flow: column wrap;
   margin: 1em;
-  background-color: aquamarine;
+}
+.left {
+  grid-area: left-controls;
+}
+.right {
+  grid-area: right-controls;
 }
