@@ -15,8 +15,7 @@ button {
 }
 main {
   width: 100vw;
-  /* background-color: cadetblue; */
-  position: relative;
+  background-color: cadetblue;
 }
 header {
   text-align: center;
@@ -30,7 +29,7 @@ header {
   grid-template-columns: repeat(var(--items-per-side), 1fr);
   border: 2px solid black;
   margin: 1em auto;
-  /* background-color: red; */
+  background-color: red;
 }
 .grid-lines {
   border: 1px solid black;
@@ -50,6 +49,5 @@ header {
   display: flex;
   flex-flow: column wrap;
   margin: 1em;
-  /* background-color: aquamarine; */
-  position: absolute;
+  background-color: aquamarine;
 }

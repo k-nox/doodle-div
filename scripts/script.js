@@ -2,12 +2,35 @@ const container = document.querySelector('.container');
 const buttons = document.querySelectorAll('button');
 const pickerInput = document.querySelector('#color-picker');
 
-let currentMode = 'black';
+let currentColorMode = 'black';
 let gridItems;
 let currentRainbowColor = 'violet';
+let currentDrawMode = 'mouseenter';
 
-const setMode = function setCurrentMode(color) {
-  currentMode = color;
+// TODO: add in turn on / off button as alternate way to control drawing
+
+const setColorMode = function setCurrentColorMode(color) {
+  currentColorMode = color;
+};
+
+const setDrawMode = function setCurrentDrawMode(mode) {
+  gridItems.forEach(item => {
+    item.removeEventListener(currentDrawMode, updateColor);
+  });
+  currentDrawMode = mode;
+  let buttonText;
+  if (currentDrawMode === 'click') {
+    if (!container.classList.contains('disabled')) {
+      container.classList.remove('disabled');
+    }
+    buttonText = 'Hover-to-Draw';
+  } else {
+    buttonText = 'Click-to-Draw';
+  }
+  document.querySelector(
+    '#toggle-draw-mode'
+  ).textContent = `Switch to ${buttonText} Mode`;
+  draw();
 };
 
 //* creates grid from user input; defaults to 16x16
@@ -28,24 +51,21 @@ const createGrid = function createGridFromUserInput(itemsPerSide = 16) {
 };
 
 //* enables hover functionality; defaults to black
-const hover = function changeColorOnHover() {
+const draw = function drawUsingCurrentDrawAndColorMode() {
   gridItems.forEach(item => {
-    item.addEventListener('mouseenter', function updateMode() {
-      changeColor(this);
-    });
+    item.addEventListener(currentDrawMode, updateColor);
   });
 };
 
-const changeColor = function changeColorBasedOnCurrentMode(item) {
-  const currentItem = item;
+function updateColor(e) {
   if (!container.classList.contains('disabled')) {
-    if (typeof currentMode === 'function') {
-      currentMode(currentItem);
+    if (typeof currentColorMode === 'function') {
+      currentColorMode(e.target);
     } else {
-      currentItem.style.background = currentMode;
+      e.target.style.background = currentColorMode;
     }
   }
-};
+}
 
 //* generates random hex color
 const randomColor = function generateRandomColor(item) {
@@ -129,7 +149,7 @@ const clear = function clearEverything() {
     if (currentGridLineStatus) {
       gridItems.forEach(item => item.classList.add('grid-lines'));
     }
-    hover();
+    draw();
   }
 };
 
@@ -165,35 +185,48 @@ const askUser = function askUserForNewGridSize(currentItemsPerSide) {
 
 //* toggles drawing capability with click on container
 container.addEventListener('click', () => {
-  container.classList.toggle('disabled');
+  if (currentDrawMode !== 'click') {
+    container.classList.toggle('disabled');
+  }
 });
 
-pickerInput.addEventListener('change', e => setMode(e.target.value));
+pickerInput.addEventListener('change', e => setColorMode(e.target.value));
 
 buttons.forEach(button =>
   button.addEventListener('click', e => {
     switch (e.target.id) {
       case 'black':
-        setMode('black');
+        setColorMode('black');
         break;
       case 'pick':
         pickerInput.focus();
         pickerInput.click();
         break;
       case 'random':
-        setMode(randomColor);
+        setColorMode(randomColor);
         break;
       case 'rainbow':
-        setMode(rainbowColor);
+        setColorMode(rainbowColor);
         break;
       case 'darken':
-        setMode(darkenGridItem);
+        setColorMode(darkenGridItem);
         break;
       case 'lighten':
-        setMode(lightenGridItem);
+        setColorMode(lightenGridItem);
         break;
       case 'erase':
-        setMode(erase);
+        setColorMode(erase);
+        break;
+      case 'toggle-draw-mode':
+        switch (currentDrawMode) {
+          case 'click':
+            setDrawMode('mouseenter');
+            break;
+          case 'mouseenter':
+            setDrawMode('click');
+            break;
+          // no default
+        }
         break;
       case 'clear':
         clear();
@@ -210,5 +243,5 @@ buttons.forEach(button =>
 document.addEventListener('DOMContentLoaded', () => {
   createGrid();
   gridItems.forEach(item => item.classList.add('grid-lines'));
-  hover();
+  draw();
 });
