@@ -227,7 +227,6 @@ buttons.forEach(button =>
         clear();
         break;
       case 'toggle-grid':
-        container.classList.toggle('container-thicker-border');
         gridItems.forEach(item => item.classList.toggle('grid-lines'));
         break;
       case 'toggle-on-off':
