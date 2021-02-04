@@ -28,9 +28,21 @@ button {
   /*   display: inline-flex;
   align-items: center;
   justify-content: center; */
-  border-radius: 100000px;
+  border-radius: 5px;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.18);
   padding: 0.25em 0.75em;
+  min-height: 44px;
+  margin: 0.5em;
+  line-height: 1.1;
+  transition: all 220ms ease-in-out;
+}
+button:hover,
+button:active {
+  filter: brightness(130%);
+}
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px cadetblue;
 }
 main {
   width: 100%;
@@ -40,12 +52,15 @@ main {
 }
 header {
   text-align: center;
+  padding: 1em;
 }
 h1 {
   font-family: 'Rock Salt', cursive;
+  line-height: 1.5;
 }
 footer {
   text-align: center;
+  margin-top: 1em;
 }
 a {
   color: var(--font-color);
@@ -60,7 +75,9 @@ a {
   grid-area: grid-container;
 }
 .grid-lines {
-  border: 1px solid var(--grid-color);
+  border-width: 1px 0 0 1px;
+  border-style: solid;
+  border-color: var(--grid-color);
 }
 .grid-item {
   --brightness-level: 1;
@@ -79,4 +96,20 @@ a {
 }
 .right {
   grid-area: right-controls;
+}
+@media screen and (max-width: 700px) {
+  main {
+    grid-template:
+      'left-controls'
+      'grid-container'
+      'right-controls';
+  }
+  .controls {
+    flex-flow: row wrap;
+    justify-content: center;
+  }
+  .container {
+    width: 75vw;
+    height: 75vw;
+  }
 }

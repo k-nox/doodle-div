@@ -28,7 +28,7 @@ const setDrawMode = function setCurrentDrawMode(newDrawMode) {
   }
   document.querySelector(
     '#toggle-draw-mode'
-  ).textContent = `Switch to ${buttonText} Mode`;
+  ).textContent = `${buttonText} Mode`;
   currentDrawMode = newDrawMode;
   draw();
 };
@@ -155,9 +155,7 @@ const clear = function clearEverything() {
 const toggleOnOff = function toggleDisabledClassOnContainer() {
   if (currentDrawMode === 'mouseenter') {
     const buttonText = container.classList.contains('disabled') ? 'Off' : 'On';
-    document.querySelector(
-      '#toggle-on-off'
-    ).textContent = `Turn Drawing ${buttonText}`;
+    document.querySelector('#toggle-on-off').textContent = `Turn ${buttonText}`;
     container.classList.toggle('disabled');
   }
 };
